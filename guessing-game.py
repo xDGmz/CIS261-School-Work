@@ -30,9 +30,23 @@ def HighLimit():
         except ValueError:
             print(f"Selection is invalid, please try again")
 
+def Guess():
+    global guess
+    GuessB = False
+    while not GuessB:
+        try:
+            guess = int(input("Take a guess. "))
+            if guess < Low:
+                print(f"Please chose a number higher than {Low}")
+            elif guess > High:
+                print(f"Please chose a number Lower than {High}")
+            else:
+                GuessB = True
+        except ValueError:
+            print("Selection is invalid, please try again")
+
 def Game():
     Continue = True
-    GuessB = False
     # Game Loop
     while Continue:
         LowLimit()
@@ -43,21 +57,13 @@ def Game():
 
         # Ask the player to guess 6 times
         for guessesTaken in range(1,7):
-            while not GuessB:
-                try:
-                    guess = int(input("Take a guess."))
-                    if guess < Low:
-                        print(f"Please chose a number higher than {Low}")
-                    elif guess > High:
-                        print(f"Please chose a number Lower than {High}")
-                    else:
-                        GuessB = True
-                except ValueError:
-                    print("Selection is invalid, please try again")
+            Guess()
             if guess < secretNumber:
                 print("Your guess is too low.")
+                Guess()
             elif guess > secretNumber:
                 print("Your guess is too high.")
+                Guess()
             else:
                 break # This condition is the correct guess
 
