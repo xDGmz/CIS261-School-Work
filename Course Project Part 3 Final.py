@@ -1,0 +1,141 @@
+import datetime
+
+fileName = "empl.txt"
+dateFormat = "%m/%d/%Y"
+empFile = []
+def writeEmpl(emplInfo):
+    with open (fileName, "a") as outfile:
+        for list in emplInfo:
+            for element in list:
+                outfile.write(f"{element} | ")
+            outfile.write("\n")
+
+def getEmpName():
+    empName = input("Enter employee name: ")
+    return empName
+
+def getDatesWorked():
+    fromValid = False
+    toValid = False
+    while not fromValid:
+        try:
+            fromDate = input("Please enter start date in the following format MM/DD/YYYY: ")
+            dateObject = datetime.datetime.strptime(fromDate, dateFormat)
+            fromValid = True
+        except ValueError:
+            print("Incorrect Date Format. Should be MM/DD/YYY")
+    while not toValid:
+        try:
+            endDate = input("Please enter end date in the following format MM/DD/YYYY: ")
+            dateObject = datetime.datetime.strptime(fromDate, dateFormat)
+            toValid = True
+        except ValueError:
+            print("Incorrect Date Format. Should be MM/DD/YYY")
+    return fromDate, endDate
+    
+def getHoursWorked():
+    hours = float(input("Enter Hours: "))
+    return hours
+
+def getHourlyRate():
+    hourlyRate = float(input("Enter Hourly Rate: "))
+    return hourlyRate
+
+def getTaxRate():
+    taxRate = float(input("Enter Tax Rate: "))
+    taxRate = taxRate / 100
+    return taxRate
+
+def CalcTaxAndNetPay(hours, hourlyRate, taxRate):
+    gPay = hours * hourlyRate
+    incomeTax = gPay * taxRate
+    netPay = gPay - incomeTax
+    return gPay, incomeTax, netPay
+
+def printInfo(DetailsPrinted):
+    totalEmployees = 0
+    totalHours = 0.00
+    totalGrossPay = 0.00
+    totalTax = 0.00
+    totalNetPay = 0.00
+    empFile = open(fileName, "r")
+    while True:
+        rundate = input ("Enter start date for report (MM/DD/YYYY) or All for all data in file: ")
+        if (rundate.upper() == "ALL"):
+            break
+        try:
+            rundate = datetime.strptime(rundate, "%m/%d/%Y")
+            break
+        except ValueError:
+            print("Invalid date format. Try again.")
+            print()
+            continue
+    while True:
+        empDetail = empFile.readline()
+        if not empDetail:
+            break
+        empDetail = empDetail.replace("\n", "")
+        empList = empDetail.split("|")
+        fromdate = empList[0]
+        if (str(rundate).upper() != "ALL"):
+            checkdate = datetime.strptime(fromdate, "%m/%d/%Y")
+            if (checkdate < rundate):
+                continue
+        todate = empList[1]
+        empname = empList[2]
+        hours = float(empList[3])
+        hourlyrate  = float(empList[4])
+        taxrate = float(empList[5])
+        grosspay, incometax, netpay = CalcTaxAndNetPay(hours, hourlyrate, taxrate)
+        print(fromdate, todate, empname, f"{hours:,.2f}",  f"{hourlyrate:,.2f}", f"{grosspay:,.2f}",  f"{taxrate:,.1%}",  f"{incometax:,.2f}",  f"{netpay:,.2f}")
+        totalEmployees += 1
+        totalHours += hours
+        totalGrossPay += grosspay
+        totalTax += incometax
+        totalNetPay += netpay
+        empTotals["totEmp"] = totalEmployees
+        empTotals["totHours"] = totalHours
+        empTotals["totGross"] = totalGrossPay
+        empTotals["totTax"] = totalTax
+        empTotals["totNet"] = totalNetPay
+        DetailsPrinted = True   
+    if (DetailsPrinted):
+        printTotals(empTotals)
+    else:
+        print("No detail information to print")
+
+def printTotals(empTotals):
+    print(f'Total Number Of Employees:    {empTotals["totEmp"]}')
+    print(f'Total Hours Of Employees:     {empTotals["totHours"]}')
+    print(f'Total Gross Pay Of Employees: {empTotals["totGross"]}')
+    print(f'Total Tax Of Employees:       {empTotals["totTax"]}')
+    print(f'Total Net Pay Of Employees:   {empTotals["totNet"]}')
+
+if __name__ == "__main__":
+    DetailsPrinted = False
+    empDetailList = []
+    empDetail = []
+    empTotals = {}
+    empList = []
+    # with open(fileName, "r") as file:
+    #    for line in file:
+    #        line = line.replace("\n", "")
+    #        empFile.append(line)
+    while True:
+        empName = getEmpName()
+        if (empName.lower() == "end"):
+            break
+        fromDate, endDate = getDatesWorked()
+        hours = getHoursWorked()
+        hourlyRate = getHourlyRate()
+        taxRate = getTaxRate()
+        empDetail.insert(0, empName)
+        empDetail.insert(1, fromDate)
+        empDetail.insert(2, endDate)
+        empDetail.insert(3, hours)
+        empDetail.insert(4, hourlyRate)
+        empDetail.insert(5, taxRate)
+        empDetailList.append(empDetail)
+        writeEmpl(empDetailList)
+        
+    printInfo(DetailsPrinted)
