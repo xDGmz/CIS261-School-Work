@@ -1,9 +1,9 @@
 def disMenu():
-    print("The Vaughn Family Movie List Program\n")
+    print("The Vaughn Family Country Code List Program\n")
     print("COMMAND MENU")
-    print("LS - List all movies")
-    print("ADD  - Add a movie")
-    print("DEL  - Delete a movie")
+    print("LS - List all Country codes")
+    print("ADD  - Add a Country code")
+    print("DEL  - Delete a Country code")
     print("EXIT - Exit program\n")
 
 def disCodes(countryList):
